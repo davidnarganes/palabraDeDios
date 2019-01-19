@@ -1,5 +1,8 @@
 from gensim.models import Word2Vec
 
+with open('data/','wb') as handle:
+    biblia_raw = handle.readlines()
+
 white_space = '<\w>'
 model = Word2Vec(size=300, window=10, min_count=1, workers=-1)
 model.build_vocab(char_sent_biblia)
