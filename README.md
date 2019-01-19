@@ -1,4 +1,4 @@
-# PalabraDeDios
+# palabraDeDios
 
 ## 1. TODO
  - Crear embedding de caracteres con la biblia
