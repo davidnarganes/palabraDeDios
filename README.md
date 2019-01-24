@@ -6,4 +6,5 @@
 
 ## 2. Fuentes de informacion
  - textgenrnn: https://github.com/minimaxir/textgenrnn
+ - https://pypi.org/project/keras-word-char-embd/
 

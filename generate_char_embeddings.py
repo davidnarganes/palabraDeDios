@@ -5,7 +5,6 @@ from itertools import islice
 from timeit import default_timer as time
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
-import dill
 import numpy as np
 
 
@@ -123,6 +122,24 @@ biblia_w = list(window(biblia, n=30))
 # Run w2v
 epochs = int(100)
 model = Word2Vec(size=300, window=10, min_count=2, workers=-1)
+
+
+model = Word2Vec(biblia_w, size=20, window=5, min_count=0, workers=multiprocessing.cpu_count()-1)
+print('model generated')
+
+# build the vocabulary
+model.build_vocab(biblia_w, update=True)
+print('vocabulary created')
+
+# train model
+model.train(biblia_w, total_examples=model.corpus_count, epochs=1)
+a = model.wv.vectors
+model.train(biblia_w, total_examples=model.corpus_count, epochs=1)
+b = model.wv.vectors
+a == b
+
+
+
 model.build_vocab(biblia_w)
 chars = list(model.wv.vocab.keys())
 
@@ -152,6 +169,7 @@ for i in range(100):
                         )
                 )
         plt.tight_layout()
-        plt.savefig('results/char_embedding_tSNE_{}.pdf'.format(i))
+        plt.show()
+        # plt.savefig('results/char_embedding_tSNE_{}.pdf'.format(i))
         plt.clf()
     
