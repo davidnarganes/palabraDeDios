@@ -6,6 +6,7 @@ from timeit import default_timer as time
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 import numpy as np
+import multiprocessing
 
 
 # def tokenise_char(sentences, remplace_list):
@@ -119,57 +120,68 @@ chars = set(biblia)
 # Sliding window
 biblia_w = list(window(biblia, n=30))
 
-# Run w2v
-epochs = int(100)
-model = Word2Vec(size=300, window=10, min_count=2, workers=-1)
-
-
-model = Word2Vec(biblia_w, size=20, window=5, min_count=0, workers=multiprocessing.cpu_count()-1)
-print('model generated')
-
-# build the vocabulary
-model.build_vocab(biblia_w, update=True)
-print('vocabulary created')
+# w2v
+# model = Word2Vec(size=300, window=10, min_count=2, workers=-1)
 
 # train model
-model.train(biblia_w, total_examples=model.corpus_count, epochs=1)
-a = model.wv.vectors
-model.train(biblia_w, total_examples=model.corpus_count, epochs=1)
-b = model.wv.vectors
-a == b
+for epochs in [1,2,3,50,200,1000,5000]:
+    model = None
+    model = Word2Vec(biblia_w, size=16, window=5, min_count=0, workers=multiprocessing.cpu_count()-1)
+    print('model generated')
 
-
-
-model.build_vocab(biblia_w)
-chars = list(model.wv.vocab.keys())
-
-# Color_dict
-colordict = get_colordict(chars)
-tsne = TSNE(n_iter=1000, random_state=0, init='pca', angle=.85)
-
-for i in range(100):
-    t0 = time()
+    # build the vocabulary
+    model.build_vocab(biblia_w, update=True)
+    print('vocabulary created')
     model.train(biblia_w, total_examples=model.corpus_count, epochs=epochs)
-    model.save("data/models/char_w2v_{}.model".format(i))
-    char_embedding = model.wv.vectors
-    np.save('data/embeddings/char_embedding_{}.npy'.format(i), char_embedding)
-    print('Saved. Time: %.2f sec' % (time() - t0))
+    model.save('data/models/char_w2v_{}_iter.w2v')
 
-    if i % 5 == 0:
-        # Visualise: Takes a while tSNE
-        embedding_2d = tsne.fit_transform(char_embedding)
-        plt.figure(i)
-        plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
-        for c,loc in zip(chars, embedding_2d):
-            plt.text(loc[0],loc[1], c, ha="center", va="center", size=9,
-                bbox=dict(boxstyle="round",
-                        ec=[.3*x for x in colordict[c]],
-                        alpha=0.6,
-                        fc=colordict[c],
-                        )
-                )
-        plt.tight_layout()
-        plt.show()
-        # plt.savefig('results/char_embedding_tSNE_{}.pdf'.format(i))
-        plt.clf()
+    # Color_dict
+    colordict = get_colordict(chars)
+    char_embedding = model.wv.vectors
+    tsne = None
+    tsne = TSNE(n_iter=0, random_state=0, init='pca', angle=.5)
+    embedding_2d = None
+    embedding_2d = tsne.fit_transform(char_embedding)
+    plt.figure()
+    plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
+    for c,loc in zip(chars, embedding_2d):
+        plt.text(loc[0],loc[1], c, ha="center", va="center", size=9,
+            bbox=dict(boxstyle="round",
+                    ec=[.3*x for x in colordict[c]],
+                    alpha=0.6,
+                    fc=colordict[c],
+                    )
+            )
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig('results/char_embedding_tSNE_{}.pdf'.format(epochs))
+    plt.close()
+
+
+
+# for i in range(100):
+#     t0 = time()
+#     model.train(biblia_w, total_examples=model.corpus_count, epochs=epochs)
+    
+#     char_embedding = model.wv.vectors
+#     np.save('data/embeddings/char_embedding_{}.npy'.format(i), char_embedding)
+#     print('Saved. Time: %.2f sec' % (time() - t0))
+
+#     if i % 5 == 0:
+#         # Visualise: Takes a while tSNE
+#         embedding_2d = tsne.fit_transform(char_embedding)
+#         plt.figure(i)
+#         plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
+#         for c,loc in zip(chars, embedding_2d):
+#             plt.text(loc[0],loc[1], c, ha="center", va="center", size=9,
+#                 bbox=dict(boxstyle="round",
+#                         ec=[.3*x for x in colordict[c]],
+#                         alpha=0.6,
+#                         fc=colordict[c],
+#                         )
+#                 )
+#         plt.tight_layout()
+#         plt.show()
+#         # plt.savefig('results/char_embedding_tSNE_{}.pdf'.format(i))
+#         plt.clf()
     
