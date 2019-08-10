@@ -1,4 +1,5 @@
 import os
+import re
 
 def mknewdir(newdir):
     if os.path.exists(newdir):
@@ -6,3 +7,9 @@ def mknewdir(newdir):
     else:
         os.mkdir(newdir)
         print("`%s` created" % newdir)
+
+def dict2str(d):
+    """
+    Convert a dict of args into a str
+    """
+    return re.sub("[\W+]", str(d), "_")

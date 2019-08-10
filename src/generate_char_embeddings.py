@@ -8,15 +8,8 @@ import multiprocessing
 from random import sample
 from itertools import islice
 
-
-from matplotlib import pyplot as plt
-
 # gensim
 from gensim.models import Word2Vec
-
-# sklearn
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 
 # keras
 from keras.models import Sequential, load_model
@@ -30,23 +23,6 @@ def tokenise_char(s, remplace_list):
     for tup in remplace_list:
         s = s.replace(tup[0],tup[1])
     return s
-
-def get_colordict(chars):
-    colordict = dict()
-    for k in chars:
-        if re.compile('\d').match(k):
-            colordict[k] = [1.0,.55,.0]
-            continue
-        elif re.compile('\s').match(k):
-            colordict[k] = [.16,.64,.16]
-            continue
-        elif re.compile('\w').match(k):
-            colordict[k] = [.12,.56,1.0]
-            continue
-        else:
-            colordict[k] = [.9,.0,.0]
-            continue
-    return colordict
 
 def get_onehot_enc(w2v_model):
     chars = list(w2v_model.wv.vocab)
@@ -83,68 +59,6 @@ def embed_sent(sent, w2v_model):
     emb = emb.reshape(1,emb.shape[0],emb.shape[1])
     return emb
 
-def preprocess(biblia):
-    # 1. Join in one string
-    biblia = '\n'.join(biblia)
-    # 5. Lowercase
-    biblia = biblia.lower()
-    # 6. Split chars
-    biblia = list(biblia)
-    # 6. Replace chars
-    remplace_dict = {
-        'á':['a','tilde'],
-        'é':['e','tilde'],
-        'í':['i','tilde'],
-        'ó':['o','tilde'],
-        'ú':['u','tilde'],
-        'ü':['u','tilde'],
-        '\n':['end_line'],
-        ' ':['white_space'],
-        }
-    biblia = [b if not b in remplace_dict else remplace_dict[b] for b in biblia]
-    # 8. Flat list
-    biblia = [item for sublist in biblia for item in sublist]
-    # 9. Replace non-valid chars
-    valid_chars = string.ascii_lowercase + string.digits + '.,:;?!()-¡¿ñ'
-    valid_chars = list(valid_chars)
-    valid_chars.extend(['tilde','dieresis','white_space'])
-    biblia = ['<unknown>' if c not in valid_chars else c for c in biblia]
-    return biblia
-
-def preprocess_all(biblia):
-    # 1. Strip text
-    biblia = [b.strip() for b in biblia if b.strip()]
-    # 1. Join in one string
-    biblia = '\n'.join(biblia)
-    # 2. Clean tabulation and symbols
-    biblia = re.sub('\s+',' ', biblia)
-    biblia = re.sub('([?!.])\s([A-Z]\w+|[1-9]+\s)',r'\1\n', biblia)
-    biblia = re.sub('\n\s(([A-Z]\w+|[1-9]+\s))',r'\n\1', biblia)
-    # 5. Lowercase
-    biblia = biblia.lower()
-    # 6. Split chars
-    biblia = list(biblia)
-    # 6. Replace chars
-    remplace_dict = {
-        'á':['a','tilde'],
-        'é':['e','tilde'],
-        'í':['i','tilde'],
-        'ó':['o','tilde'],
-        'ú':['u','tilde'],
-        'ü':['u','tilde'],
-        '\n':['end_line'],
-        ' ':['white_space'],
-        }
-    biblia = [b if not b in remplace_dict else remplace_dict[b] for b in biblia]
-    # 8. Flat list
-    biblia = [item for sublist in biblia for item in sublist]
-    # 9. Replace non-valid chars
-    valid_chars = string.ascii_lowercase + string.digits + '.,:;?!()-¡¿ñ'
-    valid_chars = list(valid_chars)
-    valid_chars.extend(['tilde','dieresis','white_space'])
-    biblia = ['<unknown>' if c not in valid_chars else c for c in biblia]
-    return biblia
-
 def window(seq, n=2):
     "Returns a sliding window (of width n) over data from the iterable"
     "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
@@ -155,51 +69,6 @@ def window(seq, n=2):
     for elem in it:
         result = result[1:] + (elem,)
         yield result
-
-def plot_embedding(w2v_model, mode='pca'):
-    chars = list(w2v_model.wv.vocab)
-    colordict = get_colordict(chars)
-    char_embedding = np.vstack([w2v_model.wv[w] for w in w2v_model.wv.vocab.keys()])
-
-    if mode =='tsne':
-        tsne = TSNE(
-            n_iter=100000,
-            random_state=0, 
-            init='pca',
-            angle=.95,
-            perplexity=30,
-            method='exact',
-                )
-        embedding_2d = tsne.fit_transform(char_embedding)
-    if mode == 'pca':
-        pca = PCA(n_components=2)
-        embedding_2d = pca.fit_transform(char_embedding)
-
-    plt.figure()
-    plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
-    for c,loc in zip(chars, embedding_2d):
-        plt.text(loc[0],loc[1], 
-            c,
-            ha="center",
-            va="center",
-            size=9,
-            bbox=dict(
-                boxstyle="round",
-                ec=[.3*x for x in colordict[c]],
-                alpha=0.6,
-                fc=colordict[c]
-                )
-            )
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig('results/AA_%s_%s_epochs_%s_window_%s_size.pdf' % (
-        mode,
-        w2v_model.epochs,
-        w2v_model.window,
-        w2v_model.vector_size
-    ))
-    plt.close()
-    print('Plotted!')  
 
 def generate_versiculo(sentence, w2v_model, model, length=40):
     if type(sentence)!=str:
