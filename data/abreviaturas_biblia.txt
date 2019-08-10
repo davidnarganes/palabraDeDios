@@ -1,0 +1,75 @@
+Génesis................................	Gn (Gén) 
+Exodo ...................................	Ex	
+Levítico ................................	Lv (Lev) 
+Números ..............................	Nm (Núm) 
+Deuteronomio ......................	Dt	
+Josué ...................................	Jos	
+Jueces .................................	Jc (Jue) 
+Rut .......................................	Rt	
+Samuel, 1 y 2 .......................	1 S (Sam) ,2 S 
+Reyes, 1 y 2 ........................	1 R (Re) , 2 R 
+Crónicas, 1 y 2 ....................	1 Cro (Par), 2 Cro 
+Esdras .................................	Esd	
+Nehemías ............................	Ne (Neh) 
+Tobías .................................	Tb (Tob) 
+Judit .....................................	Jdt	
+Ester ....................................	Est	
+Primero de los Macabeos ...	1M (Mac) 
+Segundo de los Macabeos...	2M (Mac) 1 
+Job ......................................	Jb (Job) 
+Salmos .................................	Sal	
+Proverbios ...........................	Pr (Prov) 
+Eclesiastés (Qohélet) ..........	Qo (Ecl) 
+Cantar de los Cantares .......	Ct (Cant) 
+Sabiduría .............................	Sb (Sab) 
+Eclesiástico (Sirácida) ........	Eclo, (Si)	
+Isaías ..................................	Is	
+Jeremías ..............................	Jr (Jer) 
+Lamentaciones de Jeremías...... Lm (Lam) 
+Baruc ...................................	Ba (bar) 
+Ezequiel ...............................	Ez	
+Daniel ..................................	Dn (Dan) 
+Oseas...................................	Os	
+Joel ......................................	Jl	
+Amós ...................................	Am	
+Abdías .................................	Ab (Abd) 
+Jonás ...................................	Jon	
+Miqueas ..............................	Mi (Miq) 
+Nahún ..................................	Na (Nah) 
+Habacuc ..............................	Ha (Hab) 
+Sofonías ...............................	So (Sof) 
+Ageo ....................................	Ag	
+Zacarías ..............................	Za (Zac) 
+Malaquías ...........................	Ml (Mal) 
+
+
+NUEVO TESTAMENTO
+
+Mateo ..................................	Mt	
+Marcos .................................	Mc	
+Lucas ...................................	Lc	
+Juan .....................................	Jn	
+
+Hechos de los Apóstoles ....	Hch	
+Romanos ..............................	Rm (Rom) 
+Primera Corintios ................	1Co (Cor) 
+Segunda Corintios ...............	2Co (Cor) 
+Gálatas ................................	Ga (Gál) 
+Efesios .................................	Ef	
+Filipenses ............................	Flp	
+Colosenses ..........................	Col	
+Primera Tesalonicenses ....	1Ts (Tes) 
+Segunda Tesalonicenses ...	2Ts (Tes) 
+Primera Timoteo.................	1Tm (Tim) 
+Segunda Timoteo ...............	2Tm (Tim) 
+Tito ......................................	Tt (Tit) 
+Filemón ...............................	Flm	
+Hebreos ...............................	Hb (Heb) 
+Santiago ..............................	St (Sant) 
+Primera Pedro.....................	1P (Pe) 
+Segunda Pedro.....................	2P (Pe) 
+Primera Juan........................	1Jn	
+Segunda Juan .....................	2Jn	
+Tercera Juan ......................	3Jn	
+Judas ...................................	Judas (Jds) 
+Apocalipsis .........................	Ap
