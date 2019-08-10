@@ -3,7 +3,7 @@ import re
 import sys
 import string
 
-sys.path.append("..","utils")
+sys.path.append(os.path.join("..","utils"))
 from utils import *
 
 def preprocess_func(biblia_string):
