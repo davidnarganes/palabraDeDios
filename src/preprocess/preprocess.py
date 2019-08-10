@@ -1,35 +1,7 @@
 import re
 import string
 
-def preprocess(biblia):
-    # 1. Join in one string
-    biblia = '\n'.join(biblia)
-    # 5. Lowercase
-    biblia = biblia.lower()
-    # 6. Split chars
-    biblia = list(biblia)
-    # 6. Replace chars
-    remplace_dict = {
-        'á':['a','tilde'],
-        'é':['e','tilde'],
-        'í':['i','tilde'],
-        'ó':['o','tilde'],
-        'ú':['u','tilde'],
-        'ü':['u','tilde'],
-        '\n':['end_line'],
-        ' ':['white_space'],
-        }
-    biblia = [b if not b in remplace_dict else remplace_dict[b] for b in biblia]
-    # 8. Flat list
-    biblia = [item for sublist in biblia for item in sublist]
-    # 9. Replace non-valid chars
-    valid_chars = string.ascii_lowercase + string.digits + '.,:;?!()-¡¿ñ'
-    valid_chars = list(valid_chars)
-    valid_chars.extend(['tilde','dieresis','white_space'])
-    biblia = ['<unknown>' if c not in valid_chars else c for c in biblia]
-    return biblia
-
-def preprocess_all(biblia_string):
+def preprocess_func(biblia_string):
     """
     Function to preprocess a string
     Steps:
@@ -82,5 +54,5 @@ if __name__ == "__main__":
     with open(in_filepath, 'r', encoding='latin1') as handle:
         biblia_raw = handle.readlines()
 
-    biblia_preprocessed = preprocess_all(biblia_raw)
+    biblia_preprocessed = preprocess_func(biblia_raw)
     chars = set(biblia_preprocessed)
