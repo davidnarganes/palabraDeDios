@@ -78,8 +78,9 @@ def save2tsv(out_filepath, string_preprocessed):
 
 if __name__ == "__main__":
     in_filepath = os.path.join("..","..","data","Biblia","procesado_1","biblia_no_encabezados.txt")
-    out_filepath = os.path.join("..","..","data","Biblia","AA_preprocesado","biblia_preprocessed.txt")
-    mknewdir(out_filepath)
+    out_directory = os.path.join("..","..","data","Biblia","AA_preprocesado")
+    mknewdir(out_directory)
+    out_filepath = os.path.join(out_directory, "biblia_preprocessed.txt")
 
     with open(in_filepath, "r", encoding="latin1") as handle:
         biblia_raw = handle.readlines()
