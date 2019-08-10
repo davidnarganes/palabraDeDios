@@ -174,7 +174,7 @@ def plot_embedding(w2v_model, mode='pca'):
             random_state=0, 
             init='pca',
             angle=.95,
-            perplexity=20,
+            perplexity=30,
             method='exact',
                 )
         embedding_2d = tsne.fit_transform(char_embedding)
