@@ -1,14 +1,15 @@
 # base
-from timeit import default_timer as timer
-from matplotlib import pyplot as plt
-from itertools import islice
-import multiprocessing
-import numpy as np
-from random import sample
-import string
-import time
 import re
 import os
+import time
+import string
+import numpy as np
+import multiprocessing
+from random import sample
+from itertools import islice
+
+
+from matplotlib import pyplot as plt
 
 # gensim
 from gensim.models import Word2Vec
@@ -71,7 +72,7 @@ def stackemb(SENT, DICT):
     return [DICT[c] for c in SENT]
 
 def embed_window_parallel(window, w2v_model):
-    t = timer()
+    start = time.time()
     emb_dict = {c:w2v_model.wv[c] for c in w2v_model.wv.vocab.keys()}
     n = multiprocessing.cpu_count()
     with multiprocessing.Pool(n) as p:
@@ -79,7 +80,7 @@ def embed_window_parallel(window, w2v_model):
         emb = p.starmap(stackemb, args)
         p.close()
     emb = np.asarray(emb, dtype=float)
-    print('Time for embedding: %.2f sec' % (timer() - t))
+    print('Time for embedding: %.2f sec' % (time.time() - start))
     return emb
 
 def embed_sent(sent, w2v_model):
@@ -268,14 +269,14 @@ w2v_model = Word2Vec(
     )
 
 # build the vocabulary
-t0 = timer()
+start = time.time()
 w2v_model.build_vocab(biblia_w)
-print('Vocabulary generated. Time: %.3f sec' % (timer() - t0))
+print('Vocabulary generated. Time: %.3f sec' % (time.time() - start))
 
 # train w2v_model
-t0 = timer()
+start = time.time()
 w2v_model.train(biblia_w, total_examples=w2v_model.corpus_count, epochs=1000)
-print('Model trained. Time: %.3f sec' % (timer() - t0))
+print('Model trained. Time: %.3f sec' % (time.time() - start))
 modelname = 'data/models/AA_char_w2v_%s_iter_%s_seed_%s_window_%s_size.w2v' % (
     w2v_model.epochs,
     seed,
@@ -304,11 +305,9 @@ y = np.asarray(y).reshape(len(biblia_w),len(chars))
 # LSTM
 NAME = 'biblia_%s' % (re.sub('[^\w]+','_',time.asctime()))
 mknewdir('logs')
-tb = TensorBoard(log_dir='logs/%s' % NAME)
+tensorboard = TensorBoard(log_dir='logs/%s' % NAME)
 
-rms = RMSprop()
 metrics = ['accuracy','categorical_crossentropy']
-compile_args = {'loss':'categorical_crossentropy','optimizer':'adam','metrics':['accuracy']}
 
 model = Sequential()
 model.add(Bidirectional(LSTM(10, input_shape=X.shape[1:], dropout=.3)))
@@ -316,15 +315,15 @@ model.add(Dense(50, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 
-es = EarlyStopping(monitor='val_acc', patience=5)
-args = {'shuffle':True,'callbacks':[es,tb]}
-t0 = timer()
+earlystop = EarlyStopping(monitor='val_acc', patience=10)
+args = {'shuffle':True,'callbacks':[earlystop,tensorboard]}
+t0 = time.time()
 for iteration in range(2000):
     print('iter %d' % iteration)
     s = [generate_versiculo('y dios dijo', w2v_model, model) for x in range(3)]
     print('\n%s\n\n' % '\n'.join(s))
     model.fit(X,y, batch_size=10000, epochs = 1, validation_split=.3, shuffle=True, verbose=0, callbacks=[es,tb])
-print('Time: %.3f for training' % (timer() - t0))
+print('Time: %.3f for training' % (time.time() - t0))
 # Visualise: http://localhost:6006/
 modelname = 'data/models/%s.keras' % NAME
 model.save(modelname)
