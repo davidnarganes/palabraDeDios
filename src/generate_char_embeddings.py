@@ -31,13 +31,6 @@ def tokenise_char(s, remplace_list):
         s = s.replace(tup[0],tup[1])
     return s
 
-def mknewdir(dir_):
-    if os.path.exists(dir_):
-        print('Directory already exists!')
-    else:
-        os.mkdir(dir_)
-        print('Directory created!')
-
 def get_colordict(chars):
     colordict = dict()
     for k in chars:
@@ -162,7 +155,6 @@ def window(seq, n=2):
     for elem in it:
         result = result[1:] + (elem,)
         yield result
-
 
 def plot_embedding(w2v_model, mode='pca'):
     chars = list(w2v_model.wv.vocab)
@@ -303,9 +295,9 @@ y = [onehot[c] for c in y]
 y = np.asarray(y).reshape(len(biblia_w),len(chars))
 
 # LSTM
-NAME = 'biblia_%s' % (re.sub('[^\w]+','_',time.asctime()))
+modelname = 'biblia_%s' % (re.sub('[^\w]+','_',time.asctime()))
 mknewdir('logs')
-tensorboard = TensorBoard(log_dir='logs/%s' % NAME)
+tensorboard = TensorBoard(log_dir='logs/%s' % modelname)
 
 metrics = ['accuracy','categorical_crossentropy']
 
@@ -325,7 +317,7 @@ for iteration in range(2000):
     model.fit(X,y, batch_size=10000, epochs = 1, validation_split=.3, shuffle=True, verbose=0, callbacks=[es,tb])
 print('Time: %.3f for training' % (time.time() - t0))
 # Visualise: http://localhost:6006/
-modelname = 'data/models/%s.keras' % NAME
+modelname = 'data/models/%s.keras' % modelname
 model.save(modelname)
 
 

@@ -1,3 +1,6 @@
+import re
+import string
+
 def preprocess(biblia):
     # 1. Join in one string
     biblia = '\n'.join(biblia)
@@ -26,19 +29,31 @@ def preprocess(biblia):
     biblia = ['<unknown>' if c not in valid_chars else c for c in biblia]
     return biblia
 
-def preprocess_all(biblia):
+def preprocess_all(biblia_string):
+    """
+    Function to preprocess a string
+    Steps:
+        1. Strip strings (e.g. 'moises ' -> 'moises')
+        2. Join by '\n'
+        3. Clean multiple separation (e.g. 'hey   moises' -> 'hey moises')
+        4. Lowercase
+        5. Split into characters (e.g. 'moises' into ['m','o','i','s','e','s'])
+        6. Clean characters: check dict
+        7. 
+    """
+
     # 1. Strip text
-    biblia = [b.strip() for b in biblia if b.strip()]
+    biblia_string = [b.strip() for b in biblia_string if b.strip()]
     # 1. Join in one string
-    biblia = '\n'.join(biblia)
+    biblia_string = '\n'.join(biblia_string)
     # 2. Clean tabulation and symbols
-    biblia = re.sub('\s+',' ', biblia)
-    biblia = re.sub('([?!.])\s([A-Z]\w+|[1-9]+\s)',r'\1\n', biblia)
-    biblia = re.sub('\n\s(([A-Z]\w+|[1-9]+\s))',r'\n\1', biblia)
+    biblia_string = re.sub('\s+',' ', biblia_string)
+    biblia_string = re.sub('([?!.])\s([A-Z]\w+|[1-9]+\s)',r'\1\n', biblia_string)
+    biblia_string = re.sub('\n\s(([A-Z]\w+|[1-9]+\s))',r'\n\1', biblia_string)
     # 5. Lowercase
-    biblia = biblia.lower()
+    biblia_string = biblia_string.lower()
     # 6. Split chars
-    biblia = list(biblia)
+    biblia_string = list(biblia_string)
     # 6. Replace chars
     remplace_dict = {
         'á':['a','tilde'],
@@ -50,23 +65,22 @@ def preprocess_all(biblia):
         '\n':['end_line'],
         ' ':['white_space'],
         }
-    biblia = [b if not b in remplace_dict else remplace_dict[b] for b in biblia]
+    biblia_string = [b if not b in remplace_dict else remplace_dict[b] for b in biblia_string]
     # 8. Flat list
-    biblia = [item for sublist in biblia for item in sublist]
+    biblia_string = [item for sublist in biblia_string for item in sublist]
     # 9. Replace non-valid chars
     valid_chars = string.ascii_lowercase + string.digits + '.,:;?!()-¡¿ñ'
     valid_chars = list(valid_chars)
     valid_chars.extend(['tilde','dieresis','white_space'])
-    biblia = ['<unknown>' if c not in valid_chars else c for c in biblia]
-    return biblia
+    biblia_string = ['<unknown>' if c not in valid_chars else c for c in biblia_string]
+    return biblia_string
 
-def window(seq, n=2):
-    "Returns a sliding window (of width n) over data from the iterable"
-    "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
-    it = iter(seq)
-    result = tuple(islice(it, n))
-    if len(result) == n:
-        yield result
-    for elem in it:
-        result = result[1:] + (elem,)
-        yield result
+
+if __name__ == "__main__":
+    in_filepath = '../../data/Biblia/procesado_1/biblia_no_encabezados.txt'
+
+    with open(in_filepath, 'r', encoding='latin1') as handle:
+        biblia_raw = handle.readlines()
+
+    biblia_preprocessed = preprocess_all(biblia_raw)
+    chars = set(biblia_preprocessed)
