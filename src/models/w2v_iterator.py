@@ -12,7 +12,6 @@ if __name__ == "__main__":
     in_filepath = os.path.join("..","..","data","Biblia","AA_preprocesado","biblia_preprocessed.txt")
     out_directory = os.path.join("..","..","data","models","w2v")
     mknewdir(out_directory)
-<<<<<<< HEAD
 
     epochs = 50
     params = {
@@ -22,17 +21,6 @@ if __name__ == "__main__":
         "workers":multiprocessing.cpu_count(),
         "seed":123,
         "iter":100,
-=======
-    epochs = 5
-
-    w2v_args = {
-        "size":16,
-        "window":5,
-        "min_count":0,
-        "workers":multiprocessing.cpu_count(),
-        "seed":19,
-        "iter":5,
->>>>>>> a640c426c33c017a679015bb4494e2e2c445c2b4
     }
 
     # GET DATA

@@ -2,7 +2,7 @@
    {
       "class_name": "Bidirectional",
       "config": {
-         "name": "bidirectional_6",
+         "name": "bidirectional_1",
          "trainable": true,
          "batch_input_shape": [
             null,
@@ -13,7 +13,7 @@
          "layer": {
             "class_name": "LSTM",
             "config": {
-               "name": "lstm_6",
+               "name": "lstm_1",
                "trainable": true,
                "return_sequences": false,
                "return_state": false,
@@ -63,7 +63,7 @@
    {
       "class_name": "Dense",
       "config": {
-         "name": "dense_5",
+         "name": "dense_1",
          "trainable": true,
          "units": 50,
          "activation": "softmax",

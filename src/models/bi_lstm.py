@@ -119,11 +119,12 @@ if __name__ == "__main__":
     model.add(Bidirectional(LSTM(4, dropout=.2), input_shape=X.shape[1:]))
     model.add(Dense(y.shape[1], activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam')
+
     print(model.summary())
     config = model.get_config()
     sha_code = sha256(str(config).encode()).hexdigest()
     modelpath = os.path.join(out_directory, "%s.keras" % sha_code)
-    config_filepath = model_name.replace(".keras",".json")
+    config_filepath = modelpath.replace(".keras",".json")
     with open(config_filepath, "w") as outfile:
         json.dump(config, outfile, indent=3)
 
@@ -135,6 +136,6 @@ if __name__ == "__main__":
         s = [make_verse('y dios dijo', w2v_model, model) for x in range(3)]
         print('\n%s\n\n' % '\n'.join(s))
 
-        model.fit(X,y, batch_size=10000, epochs = 1, validation_split=.3, shuffle=True, verbose=1, callbacks=[earlystop,tensorboard])
+        model.fit(X,y, batch_size=10000, epochs=2, validation_split=.3, shuffle=True, verbose=1, callbacks=[earlystop,tensorboard])
     # Visualise: http://localhost:6006/
     model.save(modelpath)

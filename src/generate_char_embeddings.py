@@ -19,11 +19,6 @@ from keras.optimizers import RMSprop
 from keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import TensorBoard
 
-def tokenise_char(s, remplace_list):
-    for tup in remplace_list:
-        s = s.replace(tup[0],tup[1])
-    return s
-
 def get_onehot_enc(w2v_model):
     chars = list(w2v_model.wv.vocab)
     char2int = dict((c, i) for i, c in enumerate(chars))
