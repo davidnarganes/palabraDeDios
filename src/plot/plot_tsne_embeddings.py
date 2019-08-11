@@ -70,7 +70,7 @@ words = list(model.wv.vocab)
 colordict, others = get_colordict(words)
 
 # Compute tSNE
-tsne = TSNE(n_iter=1000000, perplexity=5, learning_rate=1, metric='cosine', init='pca')
+tsne = TSNE(n_iter=1000000, perplexity=10, learning_rate=1, metric='cosine', init='pca')
 embedding_2d = None
 embedding_2d = tsne.fit_transform(vectors)
 
@@ -87,14 +87,27 @@ plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
 
 # Plot text
 for c,loc in zip(words, embedding_2d):
-    if c not in []:
-        plt.text(loc[0], loc[1], c, ha="center", va="center", size=9,
-            bbox=dict(boxstyle='Circle',
-                    alpha=0.5,
-                    fc=colordict[c],
-                    ec = 'none'
-                    )
-            )
+    
+    if c == '<unknown>':
+        label = '<u>'
+    elif c == '<dieresis>':
+        label = '<¨>'
+    elif c == '<tilde>':
+        label = '<´>'
+    elif c == '<white_space>':
+        label = r'<\w>'
+    elif c == '<end_line>':
+        label = r'<\n>'
+    else:
+        label = c
+
+    plt.text(loc[0], loc[1], label, ha="center", va="center", size=9,
+        bbox=dict(boxstyle='Circle',
+                alpha=0.5,
+                fc=colordict[c],
+                ec = 'none'
+                )
+        )
 
 plt.tight_layout()
 plt.axis('off')
