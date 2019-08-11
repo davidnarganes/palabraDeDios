@@ -31,7 +31,7 @@ def make_windows(list_, window_width=30):
         yield result
 
 def read_bible(in_filepath):
-    with open(in_filepath, "r") as infile:
+    with open(in_filepath, "r",  encoding='latin1') as infile:
         lines = infile.read()
     return lines.split("\t")
 
