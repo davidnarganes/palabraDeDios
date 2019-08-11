@@ -42,12 +42,21 @@ if __name__ == "__main__":
     epochs = 2
 
     w2v_args = {
+<<<<<<< HEAD
+        "size":32,
+        "window":8,
+        "min_count":1,
+        "workers":multiprocessing.cpu_count(),
+        "seed":123,
+        "iter":70,
+=======
         "size":16,
         "window":5,
         "min_count":0,
         "workers":multiprocessing.cpu_count(),
         "seed":19,
         "iter":50,
+>>>>>>> b61cd0979d7885a7b9003b1ed7edac8bc54c781a
     }
 
     # GET DATA
@@ -62,5 +71,9 @@ if __name__ == "__main__":
 
     # TRAIN
     w2v_model.build_vocab(biblia_windows)
+<<<<<<< HEAD
+    w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=1000)
+=======
     w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=epochs)
+>>>>>>> b61cd0979d7885a7b9003b1ed7edac8bc54c781a
     w2v_model.save(out_modelpath)
