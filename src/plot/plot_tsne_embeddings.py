@@ -14,7 +14,7 @@ import os
 sys.path.append(os.path.join("..","utils"))
 from utils import *
 
-model_name = 'model_size_16_window_5_min_count_0_workers_8_seed_19_iter_5_.w2v'
+model_name = 'model_size_16_window_10_min_count_0_workers_8_seed_19_iter_5_.w2v' # 50 epochs
 path_to_model = os.path.join("..","..","data","models","w2v", model_name)
 
 def get_colordict(chars):

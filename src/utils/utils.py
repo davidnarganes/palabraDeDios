@@ -13,7 +13,7 @@ def dict2str(d):
     """
     Convert a dict of args into a str
     """
-    return re.sub("\W+", str(d), "_")
+    return re.sub("\W+", "_", str(d))
 
 def unnest(nested_list):
     '''

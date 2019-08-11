@@ -39,11 +39,11 @@ if __name__ == "__main__":
     in_filepath = os.path.join("..","..","data","Biblia","AA_preprocesado","biblia_preprocessed.txt")
     out_directory = os.path.join("..","..","data","models","w2v")
     mknewdir(out_directory)
-    epochs = 5
+    epochs = 50
 
     w2v_args = {
         "size":16,
-        "window":5,
+        "window":10,
         "min_count":0,
         "workers":multiprocessing.cpu_count(),
         "seed":19,
