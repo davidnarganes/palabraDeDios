@@ -41,12 +41,12 @@ if __name__ == "__main__":
     mknewdir(out_directory)
 
     w2v_args = {
-        "size":8,
+        "size":32,
         "window":8,
         "min_count":1,
         "workers":multiprocessing.cpu_count(),
         "seed":123,
-        "iter":50,
+        "iter":70,
     }
 
     # GET DATA
@@ -61,5 +61,5 @@ if __name__ == "__main__":
 
     # TRAIN
     w2v_model.build_vocab(biblia_windows)
-    w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=100)
+    w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=1000)
     w2v_model.save(out_modelpath)
