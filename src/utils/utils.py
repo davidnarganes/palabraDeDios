@@ -14,3 +14,9 @@ def dict2str(d):
     Convert a dict of args into a str
     """
     return re.sub("[\W+]", str(d), "_")
+
+def unnest(nested_list):
+    '''
+    flattens a list of lists
+    '''
+    return [e for l in nested_list for e in l]

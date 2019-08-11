@@ -7,29 +7,36 @@ from gensim.models import Word2Vec
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 import numpy as np
+import string
+import sys
+import os
 
-path_to_model = 'character_embeddings_guillermo.w2v'
+sys.path.append(os.path.join("..","utils"))
+from utils import *
 
-def get_colordict():
+path_to_model = r'C:\Users\Sísifo\Documents\GitHub\palabraDeDios\data\models\w2v\model_.w2v'
+
+def get_colordict(chars):
     '''
-    It returns a dictionary with values caracter:RGB
-    
+    It returns a dictionary with values character:RGB
+    chars is a list of characters
     '''
 
-    modifiers = ['<¨>','<´>']
-    spaces = [r'<\n>','<\w>']
+    modifiers = ['<dieresis>','<tilde>']
+    spaces = ['<end_line>','<white_space>']
     punct = list('!,.:;?¿¡')
-    tags  = ['<u>']
+    tags  = ['<unknown>']
     symbols = list('"#$%&\'()*+-/<=>@[\\]^_`{|}~')
     digits = list(string.digits)
     vowels = list('aeiou')
     consonants = [l for l in set(list(string.ascii_letters.lower())) if l not in vowels]
     consonants.append('ñ')
+    others = [c for c in chars if c not in unnest([modifiers, spaces, punct, tags, symbols, digits, vowels, consonants])]
 
     colordict = dict()
     for k in modifiers:
         colordict[k] =  np.array([255,0,0])/255 # red
-    
+
     for k in spaces:
         colordict[k] =  np.array([0,255,0])/255 # green
 
@@ -46,45 +53,48 @@ def get_colordict():
         colordict[k] =  np.array([255,0,255])/255 # magenta
 
     for k in vowels:
-        colordict[k] =  np.array([255,128,0])/255 # orange 
+        colordict[k] =  np.array([255,128,0])/255 # orange
 
     for k in consonants:
         colordict[k] =  np.array([0,255,255])/255 # teal
 
-    return colordict
+    for k in others:
+        colordict[k] =  np.array([100,100,100])/255 # dark grey
+
+    return colordict, others
 
 # Load vectors and words
 model = Word2Vec.load(path_to_model)
 vectors=np.vstack([model[word] for word in model.wv.vocab.keys()])
 words = list(model.wv.vocab)
-colordict = get_colordict()
+colordict, others = get_colordict(words)
 
 # Compute tSNE
 tsne = TSNE(n_iter=1000000, perplexity=5, learning_rate=1, metric='cosine', init='pca')
 embedding_2d = None
 embedding_2d = tsne.fit_transform(vectors)
 
-
 # Plot positions
 plt.figure()
 plt.scatter(embedding_2d[:,0],[embedding_2d[:,1]], alpha=0.0)
 
-# Shorten some tags for plotting
-words =  ['<u>' if w == '<unknown>' else w for w in words]
-words =  ['<¨>' if w == '<dieresis>' else w for w in words]
-words =  ['<´>' if w == '<tilde>' else w for w in words]
-words =  ['<\w>' if w == '<white_space>' else w for w in words]
-words =  [r'<\n>' if w == '<end_line>' else w for w in words]
+# # Shorten some tags for plotting
+# words =  ['<u>' if w == '<unknown>' else w for w in words]
+# words =  ['<¨>' if w == '<dieresis>' else w for w in words]
+# words =  ['<´>' if w == '<tilde>' else w for w in words]
+# words =  ['<\w>' if w == '<white_space>' else w for w in words]
+# words =  [r'<\n>' if w == '<end_line>' else w for w in words]
 
 # Plot text
 for c,loc in zip(words, embedding_2d):
-    plt.text(loc[0], loc[1], c, ha="center", va="center", size=9,
-        bbox=dict(boxstyle='Circle',
-                alpha=0.5,
-                fc=colordict[c],
-                ec = 'none'
-                )
-        )
+    if c not in []:
+        plt.text(loc[0], loc[1], c, ha="center", va="center", size=9,
+            bbox=dict(boxstyle='Circle',
+                    alpha=0.5,
+                    fc=colordict[c],
+                    ec = 'none'
+                    )
+            )
 
 plt.tight_layout()
 plt.axis('off')
