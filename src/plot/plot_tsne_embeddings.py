@@ -14,7 +14,8 @@ import os
 sys.path.append(os.path.join("..","utils"))
 from utils import *
 
-path_to_model = r'C:\Users\Sísifo\Documents\GitHub\palabraDeDios\data\models\w2v\model_.w2v'
+model_name = 'model_size_16_window_5_min_count_0_workers_8_seed_19_iter_5_.w2v'
+path_to_model = os.path.join("..","..","data","models","w2v", model_name)
 
 def get_colordict(chars):
     '''
