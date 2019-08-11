@@ -74,7 +74,7 @@ def save2tsv(out_filepath, string_preprocessed):
         - Saves to `out_filepath`
     """
     if type(string_preprocessed) != list:
-        raise ValueError("`string_preprocessed` must be a list of str")
+        raise ValueError("`string_preprocessed must be a list of str")
     with open(out_filepath, "w",  encoding='latin1') as outfile:
         outfile.write("\t".join(string_preprocessed))
 
