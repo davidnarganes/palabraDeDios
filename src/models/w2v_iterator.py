@@ -39,6 +39,7 @@ if __name__ == "__main__":
     in_filepath = os.path.join("..","..","data","Biblia","AA_preprocesado","biblia_preprocessed.txt")
     out_directory = os.path.join("..","..","data","models","w2v")
     mknewdir(out_directory)
+    epochs = 2
 
     w2v_args = {
         "size":16,
@@ -61,5 +62,5 @@ if __name__ == "__main__":
 
     # TRAIN
     w2v_model.build_vocab(biblia_windows)
-    w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=1000)
+    w2v_model.train(biblia_windows, total_examples=w2v_model.corpus_count, epochs=epochs)
     w2v_model.save(out_modelpath)
