@@ -6,7 +6,7 @@ import string
 sys.path.append(os.path.join("..","utils"))
 from utils import *
 
-def preprocess_func(biblia_string):
+def preprocess_func(biblia_string, replace_unknown=True):
     """
     Function to preprocess a string
     Steps:
@@ -32,9 +32,10 @@ def preprocess_func(biblia_string):
     # 2. Join in one string
     biblia_string = "\n".join(biblia_string)
     # 3. Clean tabulation and symbols
-    biblia_string = re.sub("\s+"," ", biblia_string)
-    biblia_string = re.sub("([?!.])\s([A-Z]\w+|[1-9]+\s)",r"\1\n", biblia_string)
-    biblia_string = re.sub("\n\s(([A-Z]\w+|[1-9]+\s))",r"\n\1", biblia_string)
+    if replace_unknown:
+        biblia_string = re.sub("\s+"," ", biblia_string)
+        biblia_string = re.sub("([?!.])\s([A-Z]\w+|[1-9]+\s)",r"\1\n", biblia_string)
+        biblia_string = re.sub("\n\s(([A-Z]\w+|[1-9]+\s))",r"\n\1", biblia_string)
     # 4. Lowercase
     biblia_string = biblia_string.lower()
     # 5. Split chars
@@ -54,10 +55,11 @@ def preprocess_func(biblia_string):
     # 7. Flat list
     biblia_string = [item for sublist in biblia_string for item in sublist]
     # 8. Replace non-valid chars
-    valid_chars = string.ascii_lowercase + string.digits + ".,:;?!()-¡¿ñ"
-    valid_chars = list(valid_chars)
-    valid_chars.extend(["<tilde>","<dieresis>","<white_space>"])
-    biblia_string = ["<unknown>" if c not in valid_chars else c for c in biblia_string]
+    if replace_unknown:
+        valid_chars = string.ascii_lowercase + string.digits + ".,:;?!()-¡¿ñ"
+        valid_chars = list(valid_chars)
+        valid_chars.extend(["<tilde>","<dieresis>","<white_space>"])
+        biblia_string = ["<unknown>" if c not in valid_chars else c for c in biblia_string]
     return biblia_string
 
 def save2tsv(out_filepath, string_preprocessed):
