@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # GET DATA
     in_filepath = os.path.join("..","..","data","Biblia","AA_preprocesado","biblia_preprocessed.txt")
     log_directory = os.path.join("..","..","data","models","log")
-    w2v_modelpath = os.path.join("..","..","data","models","w2v","model_.w2v")
+    w2v_modelpath = os.path.join("..","..","data","models","w2v","model_size_16_window_10_min_count_1_workers_4_seed_123_iter_100_.w2v")
     out_directory = os.path.join("..","..","data","models","keras")
     mknewdir(log_directory)
     mknewdir(out_directory)
