@@ -1,5 +1,6 @@
 import os
 import re
+import numpy as np
 from itertools import islice
 
 def mknewdir(newdir):
@@ -47,3 +48,12 @@ def make_windows(list_, window_width=30):
     for elem in it:
         result = result[1:] + (elem,)
         yield result
+
+def chunks(l, n):
+    '''
+    Divides a list (l) into chuncks of fixed length (n)
+    '''
+    # For item i in a range that is a length of l,
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield np.array(l[i:i+n])

@@ -9,6 +9,7 @@ from utils import *
 def preprocess_func(biblia_string, replace_unknown=True):
     """
     Function to preprocess a string
+    INPUT IS A LIST OF STRINGS!!!!!!!!!!!! eg ['y dios dijo']
     Steps:
         1. Strip strings (e.g. "moises " -> "moises")
         2. Join by "\n"
