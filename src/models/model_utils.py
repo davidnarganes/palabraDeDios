@@ -24,23 +24,49 @@ def batchGenerator(text_inds, window_size, overlap, batch_size):
     '''
     iterator for batch generation
     '''
-    while True:
-        stride = window_size-overlap
-        chunk_num = int(np.floor((len(text_inds)-window_size)/stride+1))
-        batch_num = len(text_inds) // (chunk_num*batch_size)
+    while True: # make it infinite for keras
 
-        row_counter = 0
-        for batch_idx in range(batch_num):
-            X = np.zeros((batch_size, window_size-1))
-            Y = np.zeros((batch_size, 1))
+      stride = window_size-overlap
+      chunk_num = int(np.floor((len(text_inds)-window_size)/stride+1))
+      batch_num = chunk_num // batch_size
 
-            for row in range(batch_size):
-                origin = row_counter*(window_size - overlap)
-                X[row, :] = text_inds[origin:origin+window_size-1]
-                Y[row, :] = text_inds[origin+window_size-1]
-                row_counter += 1
+      row_counter = 0
+      for batch_idx in range(batch_num):
+          X = np.zeros((batch_size, window_size-1))
+          Y = np.zeros((batch_size, 1))
 
-            yield X, Y
+          for row in range(batch_size):
+              origin = row_counter*(window_size - overlap)
+              X[row, :] = text_inds[origin:origin+window_size-1]
+              Y[row, :] = text_inds[origin+window_size-1]
+              row_counter += 1
+
+          yield X, Y
+
+def statefulBatchGenerator(text_inds, window_size, overlap, batch_size):
+    '''
+    iterator for batch generation
+    '''
+    while True: # make it infinite for keras
+      
+      stride = window_size-overlap
+      chunk_num = int(np.floor((len(text_inds)-window_size)/stride+1))
+      batch_num = chunk_num // batch_size
+      
+      X = np.zeros((chunk_num, window_size-1))
+      Y = np.zeros((chunk_num, 1))
+      for row in range(chunk_num):
+          origin = row*(window_size - overlap)
+          X[row, :] = text_inds[origin:origin+window_size-1]
+          Y[row, :] = text_inds[origin+window_size-1]
+
+      # reorder rows for stateful training
+      pos = np.array(range(0, batch_num*batch_size, batch_num))
+      for batch_idx in range(batch_num):
+        batch_x = X[pos+batch_idx,:]
+        batch_y = Y[pos+batch_idx,:]
+        
+        yield batch_x, batch_y
 
 def saveModelWeights(epoch, model, save_model_dir):
     mknewdir(save_model_dir)
@@ -72,15 +98,17 @@ def generateNextElem(text, word2idx, prediction_model, num_generated=200, T=0.5)
 
     return ''.join(idx2word(idx, word2idx) for idx in sentence)
 
-def onEpochEnd(epoch, _):
-    print('\nGenerating text after epoch: %d' % epoch)
-        
-    saveModelWeights(epoch+1, model, save_model_dir)
-    loadModelWeights(epoch+1, prediction_model, save_model_dir)
-    for idx in range(2):
-        sample_text = sample_biblia[0:window_size-1]
-        sample = generateNextElem(sample_text, word2idx, prediction_model)
-        print('%s... -> %s' % (idx, sample))
+# def onEpochEnd(epoch, _):
 
-    print('Saved checkpoint to', 'weights.{}.h5'.format(epoch + 1))
+#     model.reset_states() # clear the hidden states before a new epoch
+#     saveModelWeights(epoch+1, model, save_model_dir)
+#     loadModelWeights(epoch+1, prediction_model, save_model_dir)
+    
+#     print('\nGenerating text after epoch: %d' % epoch)
+#     for idx in range(2):
+#         sample_text = sample_biblia[0:window_size-1]
+#         sample = generateNextElem(sample_text, word2idx, prediction_model)
+#         print('%s... -> %s' % (idx, sample))
+
+#     print('Saved checkpoint to', 'weights.{}.h5'.format(epoch + 1))
   
