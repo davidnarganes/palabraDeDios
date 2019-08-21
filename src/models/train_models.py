@@ -42,9 +42,11 @@ word2idx = {word:idx for idx, word in enumerate(words)}
 
 biblia_preprocessed = read_bible(in_filepath)
 biblia_inds = np.array([word2idx[c] for c in biblia_preprocessed])
+biblia_windows = np.array(list(make_windows(biblia_inds, window_width=window_size)))
+
 print('text loaded')
 
-window_size = 100 # number of characters for prediction
+window_size = 10 # number of characters for prediction
 overlap = 1 # overlaping between sentences
 batch_size = 40 # batch size
 num_epochs = 40 # number of epochs
