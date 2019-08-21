@@ -66,8 +66,8 @@ def statefulBatchGenerator(text_inds, window_size, overlap, batch_size, augmenta
       Y = np.zeros((chunk_num, 1))
       for row in range(chunk_num):
           origin = row*(window_size - overlap)
-          X[row, :] = text_temp[origin:origin+window_size-1]
-          Y[row, :] = text_temp[origin+window_size-1]
+          X[row, :] = text_inds[origin:origin+window_size-1]
+          Y[row, :] = text_inds[origin+window_size-1]
 
       # reorder rows for stateful training
       pos = np.array(range(0, batch_num*batch_size, batch_num))
