@@ -17,7 +17,7 @@ from preprocess import preprocess_func
 
 def onEpochEnd(epoch, _):
 
-    model.reset_states() # clear the hidden states before a new epoch
+    # model.reset_states() # clear the hidden states before a new epoch
     saveModelWeights(epoch+1, model, save_model_dir)
     loadModelWeights(epoch+1, prediction_model, save_model_dir)
     for idx in range(2):
@@ -45,22 +45,20 @@ biblia_inds = np.array([word2idx[c] for c in biblia_preprocessed])
 print('text loaded')
 
 window_size = 100 # number of characters for prediction
-overlap = 1 # overlaping between sentences
+overlap = 0 # overlaping between sentences
 batch_size = 40 # batch size
 num_epochs = 40 # number of epochs
 save_freq = 1
-hidden_units = [512, 512, 512]
-dropout = 0.5
-
-stride = window_size-overlap
-chunk_num = int(np.floor((len(biblia_inds)-window_size)/stride+1))
-steps_epoch = chunk_num // batch_size
+hidden_units = [1024, 512]
+dropout = 0.4
+augmentation = False
+stateful = True
 
 model = multiCuDNNLSTM(embedding_vectors, window_size-1, batch_size, 
-                       hidden_units=hidden_units, dropout=dropout)
+                       hidden_units=hidden_units, dropout=dropout, stateful=stateful)
 
 prediction_model = multiCuDNNLSTM(embedding_vectors, window_size-1, 1, 
-                                  hidden_units=hidden_units, dropout=dropout)
+                                  hidden_units=hidden_units, dropout=dropout, stateful=True)
 
 config = model.get_config()
 sha_code = sha256(str(config).encode()).hexdigest()
@@ -77,11 +75,41 @@ callbacks = [LambdaCallback(on_epoch_end=onEpochEnd), \
             EarlyStopping(patience=10, monitor='loss')]
 
 sample_biblia = 'entonces dijo dios hagamos al hombre a nuestra imagen conforme a nuestra semejanza y señoree en los peces del mar en las aves de los cielos en las bestias en toda la tierra y en todo animal que se arrastra sobre la tierra y creó dios al hombre a su imagen a imagen de dios lo creó varón y hembra los creó y los bendijo'
-verse_generator = statefulBatchGenerator(biblia_inds, window_size, overlap, batch_size)
-model.fit_generator(verse_generator,
-                    steps_per_epoch=steps_epoch,
-                    epochs=num_epochs,
-                    callbacks=callbacks)
+
+if stateful:
+    stride = window_size-overlap
+    print('original text lenght: ', len(biblia_inds))
+    if augmentation: # moving window in the text
+        chunk_num = int(np.floor((len(biblia_inds)-window_size)/stride+1))
+        print(chunk_num)
+        max_len = chunk_num*len(biblia_inds)//chunk_num 
+        text_temp = biblia_inds[0:max_len]
+        for disp in range(1, window_size):
+            subs = window_size-disp #keep a multiple of the window_size
+            text_temp = np.append(text_temp, biblia_inds[disp:biblia_inds.size-subs])
+        biblia_inds = text_temp
+        print('augmented text lenght: ', len(biblia_inds))
+
+    chunk_num = int(np.floor((len(biblia_inds)-window_size)/stride+1))
+    steps_epoch = chunk_num // batch_size
+    steps_epoch = 20000
+
+    verse_generator = statefulBatchGenerator(biblia_inds, window_size, overlap, batch_size, augmentation=True)
+    model.fit_generator(verse_generator,
+                        steps_per_epoch=steps_epoch,
+                        epochs=num_epochs,
+                        callbacks=callbacks)
+else:
+    biblia_windows = np.array(list(make_windows(biblia_inds, window_width=window_size)))
+    X = biblia_windows[:,:-1]
+    Y = np.array(biblia_windows[:,-1],ndmin=2).T
+
+    model.fit(X, Y,
+            batch_size=batch_size,
+            shuffle=True,
+            epochs=num_epochs,
+            callbacks=callbacks,
+            validation_split = 0.2)
 
 # for epoch in range(num_epochs):
 #     print('\nEpoch {}/{}'.format(epoch + 1, num_epochs))

@@ -43,23 +43,13 @@ def batchGenerator(text_inds, window_size, overlap, batch_size):
 
           yield X, Y
 
-def statefulBatchGenerator(text_inds, window_size, overlap, batch_size, augmentation = True):
+def statefulBatchGenerator(text_inds, window_size, overlap, batch_size):
     '''
     iterator for batch generation
     '''
+    
     while True: # make it infinite for keras
-      
       stride = window_size-overlap
-      
-      if augmentation: # moving window in the text
-        chunk_num = int(np.floor((len(text_inds)-window_size)/stride+1))
-        max_len = chunk_num*len(text_inds)//chunk_num 
-        text_temp = text_inds[0:max_len]
-        for disp in range(1, window_size):
-          subs = window_size-disp #keep a multiple of the window_size
-          text_temp = np.append(text_temp, text_inds[disp:text_inds.size-subs])
-        text_inds = text_temp
-
       chunk_num = int(np.floor((len(text_inds)-window_size)/stride+1))
       batch_num = chunk_num // batch_size
       X = np.zeros((chunk_num, window_size-1))
