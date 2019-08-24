@@ -17,7 +17,7 @@ from preprocess import preprocess_func
 
 def onEpochEnd(epoch, _):
 
-    # model.reset_states() # clear the hidden states before a new epoch
+    model.reset_states() # clear the hidden states before a new epoch
     saveModelWeights(epoch+1, model, save_model_dir)
     loadModelWeights(epoch+1, prediction_model, save_model_dir)
     for idx in range(2):
@@ -54,10 +54,10 @@ dropout = 0.4
 augmentation = False
 stateful = True
 
-model = multiCuDNNLSTM(embedding_vectors, window_size-1, batch_size, 
+model = multiCuDNNLSTM(embedding_vectors, batch_size, 
                        hidden_units=hidden_units, dropout=dropout, stateful=stateful)
 
-prediction_model = multiCuDNNLSTM(embedding_vectors, window_size-1, 1, 
+prediction_model = multiCuDNNLSTM(embedding_vectors, 1, 
                                   hidden_units=hidden_units, dropout=dropout, stateful=True)
 
 config = model.get_config()
@@ -94,7 +94,7 @@ if stateful:
     steps_epoch = chunk_num // batch_size
     steps_epoch = 20000
 
-    verse_generator = statefulBatchGenerator(biblia_inds, window_size, overlap, batch_size, augmentation=True)
+    verse_generator = statefulBatchGenerator(biblia_inds, window_size, overlap, batch_size)
     model.fit_generator(verse_generator,
                         steps_per_epoch=steps_epoch,
                         epochs=num_epochs,
